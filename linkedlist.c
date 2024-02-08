@@ -1,15 +1,6 @@
 #include<stdlib.h>
 #include<stdio.h>
-
-typedef struct node {
-    int data;
-    int dontCare;
-    short int essential;
-    struct node* next;
-    struct node* prev;
-}node_t;
-
-
+#include "linkedlist.h"
 
 node_t* createNode(int data) {
     node_t* newNode = (node_t*) malloc(sizeof(node_t));

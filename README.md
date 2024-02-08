@@ -4,7 +4,11 @@ Implementation of Quine McCluskey method in C. This method is used to minimize a
 ## Usage
 - compile using `make` command
 - create two text file: one will contain the ON set minterms, the other the DC set minterms
-- to run the executable you must specify 3 parameters in this order:
+- the executable needs 3 parameters in this order:
     - `on_set_filename` name of text file from which to read minterms belonging to the ON set 
     - `dc_set_filename` name of text file from which to read minterms belonging to the DC set
     - `nOfVariables` number of variables to consider in the expansion (MAX 15 variables)
+
+## Missing features
+- more variables
+- implementation of Petrick method

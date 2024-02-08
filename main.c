@@ -5,10 +5,10 @@
  * -  00
 */
 
-#include "linkedlist.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include "linkedlist.h"
 
 #define MAX_VARIABLES 15
 #define MIN_VARIABLES 1
