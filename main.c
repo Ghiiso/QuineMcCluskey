@@ -53,6 +53,59 @@ int dcCount(int);
 */
 int cardinality(int);
 
+/**
+ * Prints a number by replacing every pair of bits with its equivalent in positional cube representation
+*/
+void printPositionalCube(int, int);
+
+/**
+ * Function that turns a natural number into his positional cube representation.
+ * Every 1 is replaced by 01, every 0 is replaced by 10 and every don't care is
+ * replaced by 00.
+*/
+int toPositionalCube(int, int);
+
+/**
+ * return the natural representation of passed number given its positional cube representation.
+ * Requires n in positional cube representation.
+*/
+int fromPositionalCube(int);
+
+void printMatrix(int** m, int row, int col, int n) {
+    bool skip = false;
+    for(int r=0;r<row;r++) {
+        for(int c=0;c<col;c++) {
+            if(r==0 && c==0) {
+                for(int i=0;i<n;i++) 
+                    printf(" ");
+                    printf("\t");
+                continue;
+            }
+            if(c == 0) {
+                if(m[r][c] == -1) {
+                    skip = true;
+                    break;
+                }
+                
+                printPositionalCube(m[r][c],n);
+                printf("\t");
+                continue;
+            }
+
+            if(m[0][c] == -1)
+                continue;
+            
+            if(r == 0) {
+                printf("%d\t",fromPositionalCube(m[r][c]));
+                continue;
+            }
+            printf("%c\t",m[r][c] == 1 ? 'X':' ');
+        }
+        printf(skip?"":"\n");
+        skip = false;
+    }
+}
+
 int cardinality(int n) {
     int card = 0;
     while(n != 0) {

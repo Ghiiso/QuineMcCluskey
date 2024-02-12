@@ -39,15 +39,59 @@ bool removeNodeFromData(node_t** head, int data);
 */
 bool contains(node_t* head, int data);
 
+/**
+ * Returns the node following passed node
+*/
 node_t* next(node_t* this);
+
+/**
+ * Returns the node preceeding passed node
+*/
 node_t* prev(node_t* this);
+
+/**
+ * Returns data contained inside passed node
+*/
 int getData(node_t* this);
+
+/**
+ * Returns 1 if passed node is essential, 
+ * 0 if it isn't
+ * -1 if is NULL
+*/
 int isEssential(node_t* this);
+
+/**
+ * Returns 1 if passed node is part of the DC set, 
+ * 0 if it isn't
+ * -1 if is NULL
+*/
 int isDontCare(node_t* this);
+
+/**
+ * Sets current node's data to passed value
+*/
 bool setData(node_t* this, int value);
+
+/**
+ * Sets current node's isEssential field to passed value
+*/
 bool setEssential(node_t* this, int value);
+
+/**
+ * Sets current node's data to passed value
+*/
 bool setDontCare(node_t* this, int value);
+
+/**
+ * Returns length of passed list
+*/
 int length(node_t* this);
-int append(int,int);
+
+/**
+ * function that returns true. Used as criteria to append
+ * last element at the end of the list 
+*/
+int append(int a, int b);
 #endif
 

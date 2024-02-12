@@ -10,41 +10,6 @@
 #include "main.h"
 #include "petrick.h"
 
-void printMatrix(int** m, int row, int col, int n) {
-    bool skip = false;
-    for(int r=0;r<row;r++) {
-        for(int c=0;c<col;c++) {
-            if(r==0 && c==0) {
-                for(int i=0;i<n;i++) 
-                    printf(" ");
-                    printf("\t");
-                continue;
-            }
-            if(c == 0) {
-                if(m[r][c] == -1) {
-                    skip = true;
-                    break;
-                }
-                
-                printPositionalCube(m[r][c],n);
-                printf("\t");
-                continue;
-            }
-
-            if(m[0][c] == -1)
-                continue;
-            
-            if(r == 0) {
-                printf("%d\t",fromPositionalCube(m[r][c]));
-                continue;
-            }
-            printf("%c\t",m[r][c] == 1 ? 'X':' ');
-        }
-        printf(skip?"":"\n");
-        skip = false;
-    }
-}
-
 /**
  * Removes every row that doesn't cover any constraint and
  * returns the number of removed lines

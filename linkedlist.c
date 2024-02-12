@@ -69,7 +69,7 @@ bool removeNodeFromData(node_t** head, int data) {
 
 node_t* next(node_t* this) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function next",EFAULT);
         return NULL;
     }
     return this->next;
@@ -77,7 +77,7 @@ node_t* next(node_t* this) {
 
 node_t* prev(node_t* this) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function prev",EFAULT);
         return NULL;
     }
     return this->prev;
@@ -85,7 +85,7 @@ node_t* prev(node_t* this) {
 
 int getData(node_t* this) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function getData",EFAULT);
         return -1;
     }
     return this->data;
@@ -93,7 +93,7 @@ int getData(node_t* this) {
 
 int isEssential(node_t* this) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function isEssential",EFAULT);
         return -1;
     }
     return this->essential;
@@ -101,7 +101,7 @@ int isEssential(node_t* this) {
 
 int isDontCare(node_t* this) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function isDontCare",EFAULT);
         return -1;
     }
     return this->dontCare;
@@ -109,7 +109,7 @@ int isDontCare(node_t* this) {
 
 bool setData(node_t* this, int value) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function setData",EFAULT);
         return false;
     }
     this->data = value;
@@ -118,7 +118,7 @@ bool setData(node_t* this, int value) {
 
 bool setEssential(node_t* this, int value) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function setEssential",EFAULT);
         return false;
     }
     this->essential = value;
@@ -127,7 +127,7 @@ bool setEssential(node_t* this, int value) {
 
 bool setDontCare(node_t* this, int value) {
     if (this == NULL) {
-        error("Error: access to NULL pointer",EFAULT);
+        error("Error: access to NULL pointer in function setDontCare",EFAULT);
         return false;
     }
     this->dontCare = value;

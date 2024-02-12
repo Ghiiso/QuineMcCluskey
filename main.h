@@ -7,26 +7,17 @@
 #define MIN_VARIABLES 1
 
 /**
- * Prints a number by replacing every pair of bits with its equivalent in positional cube representation
-*/
-void printPositionalCube(int, int);
-
-/**
- * Function that turns a natural number into his positional cube representation.
- * Every 1 is replaced by 01, every 0 is replaced by 10 and every don't care is
- * replaced by 00.
-*/
-int toPositionalCube(int, int);
-
-/**
- * return the natural representation of n given its positional cube representation.
- * Requires n in positional cube representation.
-*/
-int fromPositionalCube(int);
-
-/**
  * Returns number of literals in n.
  * Requires n in positional cube representation
 */
-int literals(int);
+int literals(int n);
+
+/**
+ * Prints passed matrix.
+ * @param m pointer to matrix
+ * @param row number of rows 
+ * @param col number of columns
+ * @param n number of variables considered 
+*/
+void printMatrix(int** m, int row, int col, int n);
 #endif
