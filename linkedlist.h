@@ -22,29 +22,32 @@ node_t* insertNode(node_t** head, int data, int (*criteria)(int, int));
  * Removes passed node from the list it's inserted
  * @param node node to remove
 */
-short int removeNode(node_t** head, node_t* node);
+bool removeNode(node_t** head, node_t* node);
+
 /**
  * Removes the first element with value data from passed list. 
- * Returns 1 if element has been removed successfully, 0 otherwise.
+ * Returns true if element has been removed successfully, false otherwise.
  * @param head head of the list to remove item from
  * @param data value of element to remove
 */
-short int removeNodeFromData(node_t** head, int data);
+bool removeNodeFromData(node_t** head, int data);
 
 /**
- * Returns 1 if list contains at least an element with value that equals data, 0 otherwise.
+ * Returns true if list contains at least an element with value that equals data, false otherwise.
  * @param head head of the list to search
  * @param data value to search inside the list
 */
-short int contains(node_t* head, int data);
+bool contains(node_t* head, int data);
+
 node_t* next(node_t* this);
 node_t* prev(node_t* this);
-node_t* search(node_t** head, int data);
 int getData(node_t* this);
 int isEssential(node_t* this);
 int isDontCare(node_t* this);
-short int setData(node_t* this, int value);
-short int setEssential(node_t* this, int value);
-short int setDontCare(node_t* this, int value);
+bool setData(node_t* this, int value);
+bool setEssential(node_t* this, int value);
+bool setDontCare(node_t* this, int value);
+int length(node_t* this);
+int append(int,int);
 #endif
 

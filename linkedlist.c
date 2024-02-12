@@ -1,5 +1,12 @@
-#include<stdlib.h>
-#include<stdio.h>
+/**
+ * LINKED LIST IMPLEMENTATION
+ * Implements all necessary methods to handle a linked list
+*/
+
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
 #include "linkedlist.h"
 
 node_t* createNode(int data) {
@@ -11,6 +18,11 @@ node_t* createNode(int data) {
     newNode->essential = 1;
     newNode->dontCare = 0;
     return newNode;
+}
+
+void error(char* str, int errorMsg) {
+    errno = errorMsg;
+    perror(str);
 }
 
 node_t* insertNode(node_t** head, int data, int (*criteria)(int,int)) {
@@ -30,35 +42,34 @@ node_t* insertNode(node_t** head, int data, int (*criteria)(int,int)) {
     return newNode;
 }
 
-node_t* search(node_t** head, int data) {
-    node_t* cursor = *head;
+node_t* search(node_t* cursor, int data) {
     while(cursor != NULL && cursor->data != data) {
         cursor = cursor->next;
     }
     return cursor;
 }
 
-short int contains(node_t* head, int data) {
-    return search(&head,data) != NULL ? 1:0;
+bool contains(node_t* head, int data) {
+    return (bool) (search(head, data) != NULL);
 }
 
-short int removeNode(node_t** head, node_t* node) {
-    if(node == NULL) return 0;
+bool removeNode(node_t** head, node_t* node) {
+    if(node == NULL) return false;
     if(node->prev != NULL) node->prev->next = node->next;
     else *head = node->next;
     if(node->next != NULL) node->next->prev = node->prev;
     free(node); 
-    return 1;
+    return true;
 }
 
-short int removeNodeFromData(node_t** head, int data) {
-    node_t* cursor = search(head,data);
+bool removeNodeFromData(node_t** head, int data) {
+    node_t* cursor = search(*head,data);
     return removeNode(head,cursor);
 }
 
 node_t* next(node_t* this) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
+        error("Error: access to NULL pointer",EFAULT);
         return NULL;
     }
     return this->next;
@@ -66,7 +77,7 @@ node_t* next(node_t* this) {
 
 node_t* prev(node_t* this) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
+        error("Error: access to NULL pointer",EFAULT);
         return NULL;
     }
     return this->prev;
@@ -74,7 +85,7 @@ node_t* prev(node_t* this) {
 
 int getData(node_t* this) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
+        error("Error: access to NULL pointer",EFAULT);
         return -1;
     }
     return this->data;
@@ -82,7 +93,7 @@ int getData(node_t* this) {
 
 int isEssential(node_t* this) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
+        error("Error: access to NULL pointer",EFAULT);
         return -1;
     }
     return this->essential;
@@ -90,36 +101,58 @@ int isEssential(node_t* this) {
 
 int isDontCare(node_t* this) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
+        error("Error: access to NULL pointer",EFAULT);
         return -1;
     }
     return this->dontCare;
 }
 
-short int setData(node_t* this, int value) {
+bool setData(node_t* this, int value) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
-        return 0;
+        error("Error: access to NULL pointer",EFAULT);
+        return false;
     }
     this->data = value;
-    return 1;
+    return true;
 }
 
-short int setEssential(node_t* this, int value) {
+bool setEssential(node_t* this, int value) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
-        return 0;
+        error("Error: access to NULL pointer",EFAULT);
+        return false;
     }
     this->essential = value;
-    return 1;
+    return true;
 }
 
-short int setDontCare(node_t* this, int value) {
+bool setDontCare(node_t* this, int value) {
     if (this == NULL) {
-        perror("\nError: access to NULL pointer\n");
-        return 0;
+        error("Error: access to NULL pointer",EFAULT);
+        return false;
     }
     this->dontCare = value;
-    return 1;
+    return true;
+}
+
+int length(node_t* this) {
+    int c = 0;
+    while(this != NULL) {
+        this = this->next;
+        c++;
+    }
+    return c;
+}
+
+void removeList(node_t** this) {
+    node_t* temp;
+    while(*this != NULL) {
+        temp = *this;
+        *this = (*this)->next;
+        free(temp);
+    }
+}
+
+int append(int a, int b) {
+    return true;
 }
 

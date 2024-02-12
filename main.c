@@ -1,4 +1,5 @@
 /**
+ * MAIN FILE
  * maximum of 15 variables: every 2 bit represent a literal in positional cube representation:
  * x  01
  * x' 10
@@ -8,50 +9,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <stdbool.h>
 #include "linkedlist.h"
+#include "main.h"
+#include "petrick.h"
 
-#define MAX_VARIABLES 15
-#define MIN_VARIABLES 1
+static const char variables[] = {'x', 'y', 'z', 'w', 't', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'};
 
-int cardinality(int);
-int dcCount(int);
-int criteria(int, int);
+
+/**
+ * Joins a and b by putting a DC in place of the different digit. 
+ * Requires that a and b are in positional cube representation
+ * and that they are compatible
+*/
+int join(int a, int b);
+
+/**
+ * Returns 1 if a and b are compatible e.g. the don't care are in the same positions, 0 otherwise
+*/
 int compatible(int, int);
-int fromPositionalCube(int);
-void printBinary(int,int);
-void printPositionalCube(int, int);
-void printImplicantVariables(node_t*, int);
-int toPositionalCube(int, int);
-int fromPositionalCube(int);
-int join(int, int);
-void removeNonPrime(node_t**);
-void removeDc(node_t**);
-void printList(node_t*, int);
-void executeQMC(node_t**,int);
-
-/**
- * Counts number of 01 pairs (1) in n. Requires that n is in positional cube representation 
-*/
-int cardinality(int n) {
-    int card = 0;
-    while(n != 0) {
-        card += n & 0b01;
-        n >>= 2;
-    }
-    return card;
-}
-
-/**
- * Counts number of don't care (00) in n
-*/
-int dcCount(int n) {
-    int dc = 0;
-    while(n != 0) {
-        dc += (~n & 0b11) == 0b11;
-        n >>= 2;
-    }
-    return dc;
-}
 
 /**
  * Criteria to order implicants list. Returns 1 if
@@ -60,18 +36,50 @@ int dcCount(int n) {
  * - cardinality of a is less than the cardinality of b
  * 0 otherwise.
 */
+int criteria(int, int);
+
+/**
+ * Print passed implicant using Boolean algebra notation
+*/
+void printImplicantVariables(int, int);
+
+/**
+ * Counts number of don't care (00) in n
+*/
+int dcCount(int);
+
+/**
+ * Counts number of 01 pairs (1) in n. Requires that n is in positional cube representation 
+*/
+int cardinality(int);
+
+int cardinality(int n) {
+    int card = 0;
+    while(n != 0) {
+        card += n & ONE;
+        n >>= 2;
+    }
+    return card;
+}
+
+int dcCount(int n) {
+    int dc = 0;
+    for(int i=0;i<(sizeof(int)*2);i++) {
+        dc += (((~n) & 0b11) == 0b11);
+        n >>= 2;
+    }
+    return dc;
+}
+
 int criteria(int a, int b) {
     if(dcCount(a) != dcCount(b)) return dcCount(a) < dcCount(b);
     if(cardinality(a) == cardinality(b)) return fromPositionalCube(a) < fromPositionalCube(b);
     return cardinality(a) < cardinality(b);
 }
 
-/**
- * Returns 1 if a and b are compatible e.g. the don't care are in the same positions, 0 otherwise
-*/
 int compatible(int a, int b) {
     while (a != 0 || b != 0) {
-        int a1 = (a >> 1) & 0b1;
+        int a1 = (a >> 1) & 0b1; // single bit
         int a0 = a & 0b1;
         int b1 = (b >> 1) & 0b1;
         int b0 = b & 0b1;
@@ -82,10 +90,8 @@ int compatible(int a, int b) {
     return 1;
 }
 
-/**
- * Prints a number by replacing every pair of bits with its equivalent in positional cube representation
-*/
 void printPositionalCube(int n, int nOfVariables) {
+    if(n < 0) return;
     int c; 
     char symbols[] = {'-','1','0',0};
     int shamt = nOfVariables*2-2;
@@ -95,36 +101,27 @@ void printPositionalCube(int n, int nOfVariables) {
     }
 }
 
-/**
- * Print passed implicant using Boolean algebra notation
-*/
-void printImplicantVariables(node_t* implicant, int nOfVariables) {
-    const char variables[] = {'x', 'y', 'z', 'w', 't', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k'};
-    
-    int n = getData(implicant);
-    for(int i = 0;i < nOfVariables; i++) {
-        switch(n & 0b11) {
+void printImplicantVariables(int n, int nOfVariables) {
+    int var = 0;
+    for(int i = nOfVariables-1;i >= 0; i--) {
+        switch((n>>(2*i)) & 0b11) {
             case 1:
-                printf("%c",variables[i]);
+                printf("%c",variables[var]);
                 break;
             case 2:
-                printf("%c'",variables[i]);
+                printf("%c'",variables[var]);
                 break;
         };
-        n >>= 2;
+        var++;
     }
 }
 
-/**
- * Function that turns a natural number into his positional cube representation.
- * Every 1 is replaced by 01, every 0 is replaced by 10 and every don't care is
- * replaced by 00.
-*/
 int toPositionalCube(int n, int nOfVariables) {
     int ps = 0;
-    for(int i=0; i<nOfVariables && i<sizeof(int)*4; i++) {
-        if(n>>i & 1) ps += (0b01 << (2*i));
-        else ps += (0b10 << (2*i));
+    int i;
+    for(i=0; i<nOfVariables; i++) {
+        if(n>>i & 1) ps += (ONE << (2*i));
+        else ps += (ZERO << (2*i));
     }
     return ps;
 }
@@ -137,25 +134,25 @@ int pot(int b,int e) {
     return b*pot(b,e-1);
 }
 
-/**
- * return the natural representation of n given its positional cube representation.
- * Requires n in positional cube representation.
-*/
 int fromPositionalCube(int n) {
     int i = 0, res = 0;
     while(n != 0) {
-        res += pot(2,i)*(n&0b11%2);
+        res += pot(2,i)*(n & 0b11 % 2);
         n >>= 2;
         i++;
     }
     return res;
 }
 
-/**
- * Function that joins two implicants into a single one by putting a don't care (00) on the first different pair of bits.
- * Requires that a and b have a Hamming distance of 1. If a and b have a Hamming distance different than 1, function
- * behaviour is undetermined.
-*/
+int literals(int n) {
+    int res = 0;
+    while(n != 0) {
+        res += !!(n & 0b11);
+        n >>= 2;
+    }
+    return res;
+}
+
 int join(int a, int b) {
     int i = 0;
     while((a >> 2*i) != 0) {
@@ -186,9 +183,9 @@ void removeFromList(node_t** implicants, int (*criteria)(node_t*), int criteriaT
 
 void printList(node_t* l, int n) {
     while(l != NULL) {
-        printPositionalCube(l->data, n);
+        printPositionalCube(getData(l), n);
         printf("\t");
-        printImplicantVariables(l, n);
+        printImplicantVariables(getData(l), n);
         printf("\n");
         l = next(l);
     }
@@ -208,8 +205,10 @@ void executeQMC(node_t** implicants, int nOfVariables) {
         while(nextImplicant != NULL) {
             if (cardinality(getData(cursor) ^ getData(nextImplicant)) == 1 && compatible(getData(cursor), getData(nextImplicant))) {
                 int joinedValue = join(getData(cursor), getData(nextImplicant));
-                if(!contains(*implicants, joinedValue)) current = insertNode(implicants, joinedValue, &criteria);
-                if(isDontCare(cursor) && isDontCare(nextImplicant)) setDontCare(current, 1);
+                if(!contains(*implicants, joinedValue)) 
+                    current = insertNode(implicants, joinedValue, &criteria);
+                if(isDontCare(cursor) && isDontCare(nextImplicant)) 
+                    setDontCare(current, 1);
                 setEssential(cursor, 0);
                 setEssential(nextImplicant, 0);
             }
@@ -219,6 +218,7 @@ void executeQMC(node_t** implicants, int nOfVariables) {
     }
     removeFromList(implicants, &isEssential, 0);
     removeFromList(implicants, &isDontCare, 1);
+    return;
 }
 
 /**
@@ -251,9 +251,12 @@ void getMintermsFromFile(node_t** minterms, int nOfVariables, char* filename, in
 
 int main(int argc, char *argv[]) {
     int nOfVariables = 0;
-    node_t* implicants = NULL;
+    node_t* implicants = NULL; // list of prime implicants 
+    node_t* constraint = NULL; // list of ON set minterms
+    node_t* essentials = NULL; // list of essentials or partial reduntant implicants
     char* on_filename;
     char* dc_filename;
+
     if(argc != 4) {
         errno = EPERM;
         perror("Usage: quineMcCluskey on_set_filename dc_set_filename nOfVariables");
@@ -269,7 +272,16 @@ int main(int argc, char *argv[]) {
         }
     }
     getMintermsFromFile(&implicants, nOfVariables, on_filename, 0);
+    getMintermsFromFile(&constraint, nOfVariables, on_filename, 0);
     getMintermsFromFile(&implicants, nOfVariables, dc_filename, 1);
     executeQMC(&implicants, nOfVariables);
-    printList(implicants, nOfVariables);
+    essentials = petrick(constraint, implicants, nOfVariables);
+    printf("Essential implicants:\n");
+    printList(essentials,nOfVariables);
+    printf("\nPoS form:\n");
+    while(essentials != NULL) {
+        printImplicantVariables(getData(essentials), nOfVariables);
+        if((essentials = next(essentials)) != NULL) 
+            printf(nOfVariables<8 ? " + " : " +\n");
+    }
 }
